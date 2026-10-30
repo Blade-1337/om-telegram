@@ -1,19 +1,18 @@
 # OnlyMonster → Telegram
 
-Принимает вебхуки OnlyMonster (чаевые и PPV) и шлёт уведомления в Telegram без дублей.
+Уведомления в Telegram о новых транзакциях (чаевые, PPV и др.) без дублей и потерь.
+
+Как работает: вебхук OnlyMonster запускает быстрый опрос эндпоинта транзакций (через 3, 20 и 60 сек),
+плюс регулярный опрос раз в минуту. Каждая транзакция отправляется один раз (по её id).
 
 ## Render
-- Тип: Web Service, Runtime: Python
+- Web Service, Runtime: Python
 - Build: `pip install -r requirements.txt`
 - Start: `uvicorn main:app --host 0.0.0.0 --port $PORT`
-- Environment: переменные из `.env.example`
 - Health Check Path: `/health`
-- Адрес вебхука: `https://<имя>.onrender.com/webhook` (вставить в OnlyMonster → API → Webhooks)
+- Environment: переменные из `.env.example`
+- Вебхук: `https://<имя>.onrender.com/webhook` → OnlyMonster → API → Webhooks
 
-## Бот
-1. @BotFather → /newbot → токен.
-2. Напишите боту, откройте `https://api.telegram.org/bot<TOKEN>/getUpdates`, возьмите `chat.id`.
-
-## Локальный запуск
-    pip install -r requirements.txt
-    export $(cat .env | xargs) && uvicorn main:app --reload
+## Типы транзакций
+Тип приходит строкой (например `Payment for message`). Не нужные типы исключаются через `EXCLUDE_TYPES`.
+Смотрите логи: незнакомые типы видны в строках "отправлено: tx:... (тип)".
